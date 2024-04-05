@@ -5,9 +5,12 @@
 
 // Tasks
 // [x] Parse the input into constituent pieces
-// [] Execute commands with fork, exec, and wait (each command will be a child
+// [x] Execute commands with fork, exec, and wait (each command will be a child
 // proces)
-// [] Support custom commands: exit, cd, path
+// [x] Support custom commands: exit, cd, path
+// [] Add support for redirection (>)
+// [] Add support for ampersand commands (&)
+// [] Add program errors
 
 int main(int argc, char *argv[]) {
   fprintf(stdout, "Welcome to the Wish shell! \n\n");
@@ -27,7 +30,7 @@ int main(int argc, char *argv[]) {
     line[strcspn(line, "\n")] = '\0';
 
     // Split the string into parts with strsep()
-    char *argv[10];
+    char *argv[10] = {NULL};
     size_t argc = 0;
     char *token;
 
@@ -43,41 +46,53 @@ int main(int argc, char *argv[]) {
       perror("fork");
       return 1;
     } else if (pid == 0) {
-      printf("Child process\n");
+      // Child Process
 
       char *main_cmd = argv[0];
-      char cmd_str[100];
-      sprintf(cmd_str, "/bin/%s", main_cmd);
 
-      if ((strstr(main_cmd, "exit") == 0)) {
+      // Checking for built-in commands
+      if ((strstr(main_cmd, "exit") != NULL)) {
         exit(1);
-      } else if ((strstr(main_cmd, "cd") == 0)) {
-        // 0 or >1 args should be an error
+      } else if ((strstr(main_cmd, "cd") != NULL)) {
         if (argc > 1) {
           perror("too many args in cd");
         }
         char *dir = argv[1];
         chdir(dir);
-      } else if ((strstr(main_cmd, "path") == 0)) {
+        continue;
+      } else if ((strstr(main_cmd, "path") != NULL)) {
+        printf("Setting new path\n");
         // takes 0 or more args; each arg separated by whitespace
         // e.g., wish> path /bin /usr/bin
-        for (size_t i = 1; i<argc; i++) {
-          search_path[i-1] = argv[i]; // we use i-1 b/c of the main cmd being at argv[0]
+        for (size_t i = 1; i <= argc; i++) {
+          search_path[i - 1] =
+              argv[i]; // we use i-1 b/c of the main cmd is at argv[0]
         }
+
+        // Printing all the paths
+        for (size_t i = 0; i < argc - 1; i++) {
+          printf("%s\n", search_path[i]);
+        }
+        continue;
       }
 
-      execv(cmd_str, argv);
+      // Executing regular commands
+      for (size_t i = 0; i <= argc - 1; i++) {
+        char *curr_path = search_path[i];
+        char cmd_str[100];
+        sprintf(cmd_str, "%s/%s", curr_path, main_cmd);
+        printf("trying path: %s\n", cmd_str);
+        if (access(cmd_str, X_OK) == 0) {
+          execv(cmd_str, argv);
+          break;
+        }
+      }
+      perror("no valid commands");
     } else {
-      // Parent process
-      printf("Parent process\n");
-      waitpid(pid, NULL, 0);
+      // Parent Process
+      int rc_wait = wait(NULL);
     }
     free(line);
   }
-
-  return EXIT_SUCCESS;
+  return 0;
 }
-
-void command_change_dir(char *dir) { chdir(dir); }
-
-void command_path() {}
