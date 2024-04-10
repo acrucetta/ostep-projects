@@ -1,9 +1,11 @@
-trying path: /bin/ls
-NOTES.md
-README.md
-main
-main.c
-main.dSYM
-output
-test-wish.sh
-tests
+total 120
+drwxr-xr-x   10 andrescru  staff    320 Apr  9 21:46 .
+drwxr-xr-x   24 andrescru  staff    768 Apr  9 21:34 ..
+-rw-r--r--    1 andrescru  staff   1561 Apr  4 10:07 NOTES.md
+-rw-r--r--@   1 andrescru  staff  12153 Apr  9 21:34 README.md
+-rwxr-xr-x    1 andrescru  staff  34888 Apr  9 21:46 main
+-rw-r--r--@   1 andrescru  staff   3652 Apr  9 21:46 main.c
+drwxr-xr-x@   3 andrescru  staff     96 Apr  4 21:10 main.dSYM
+-rw-r--r--@   1 andrescru  staff      0 Apr  9 21:47 output
+-rwxr-xr-x    1 andrescru  staff    124 Mar 29 15:01 test-wish.sh
+drwxr-xr-x  141 andrescru  staff   4512 Mar 29 15:02 tests

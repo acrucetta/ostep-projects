@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> // For close, dup2, execv
-#include <unistd.h>
 
 // Tasks
 // [x] Parse the input into constituent pieces
@@ -17,15 +16,13 @@
 
 int main(int argc, char *argv[]) {
   fprintf(stdout, "Welcome to the Wish shell! \n\n");
-  char *search_path[10];
-  search_path[0] = "/bin";
-
+  char *search_path[10] = {"/bin", NULL};
   while (1) {
+    printf("wish> ");
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
 
-    printf("wish> ");
     while ((read = getline(&line, &len, stdin)) == -1) {
       if (feof(stdin)) {
         exit(0);
@@ -34,13 +31,19 @@ int main(int argc, char *argv[]) {
     }
 
     line[strcspn(line, "\n")] = '\0';
+    char *line_copy = line; 
 
     char *command;
     int n_children = 0;
-
-    while ((command = strsep(&line, "&")) != NULL) {
+    
+    while ((command = strsep(&line_copy, "&")) != NULL) {
       if (strlen(command) == 0)
         continue;
+
+      // Trim the whitespace
+      while (command[0] == ' ') {
+        command++;
+      }
 
       pid_t pid = fork();
 
@@ -49,14 +52,20 @@ int main(int argc, char *argv[]) {
         perror("fork");
         return 1;
       } else if (pid == 0) {
+
+        // CHILD PROCESS
         char *cmd_argv[10] = {NULL};
         size_t cmd_argc = 0;
-        char *token;
         bool redirect_stdout = false;
         char *filename;
 
-        while ((token = strsep(&line, " ")) != NULL) {
-          if (strstr(token, ">")) {
+        char *token;
+        while ((token = strsep(&command, " ")) != NULL) {
+          if (strlen(token) == 0) {
+            continue;
+          }
+
+          if (strstr(token, ">") != NULL) {
             redirect_stdout = true;
             continue;
           }
@@ -67,7 +76,6 @@ int main(int argc, char *argv[]) {
           cmd_argv[cmd_argc] = token;
           cmd_argc++;
         }
-        printf("%d: stdout with filename %s\n", redirect_stdout, filename);
 
         // BUILT-IN COMMANDS
         if ((strstr(cmd_argv[0], "exit") != NULL)) {
@@ -78,7 +86,7 @@ int main(int argc, char *argv[]) {
           }
           char *dir = cmd_argv[1];
           chdir(dir);
-          continue;
+          exit(0);
         } else if ((strstr(cmd_argv[0], "path") != NULL)) {
           printf("Setting new path\n");
           // takes 0 or more args; each arg separated by whitespace
@@ -92,7 +100,7 @@ int main(int argc, char *argv[]) {
           for (size_t i = 0; i < cmd_argc - 1; i++) {
             printf("%s\n", search_path[i]);
           }
-          continue;
+          exit(0);
         }
 
         // SET-UP REDIRECTION FILE
