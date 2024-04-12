@@ -11,7 +11,7 @@
 // (each command will be a child proces)
 // [x] Support custom commands: exit, cd, path
 // [x] Add support for redirection (>)
-// [] Add support for ampersand commands (&)
+// [x] Add support for ampersand commands (&)
 // [] Add program errors
 
 int main(int argc, char *argv[]) {
