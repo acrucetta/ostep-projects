@@ -99,3 +99,4 @@ sys_trace(void)
   return 0;
 }
 
+uint64 sys_getreadcount(void) { return myproc()->read_count; }

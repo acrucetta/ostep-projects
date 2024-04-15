@@ -106,4 +106,5 @@ struct proc {
   char name[16];               // Process name (debugging)
 
   uint64 syscall_trace;
+  uint64 read_count;
 };

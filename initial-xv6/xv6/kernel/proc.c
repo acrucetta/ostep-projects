@@ -146,6 +146,9 @@ found:
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
 
+  // Set the read_count to 0
+  p->read_count = 0;
+
   return p;
 }
 

@@ -19,11 +19,12 @@ int mkdir(const char*);
 int chdir(const char*);
 int dup(int);
 int getpid(void);
-int trace(const char *);
-int getcount(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int trace(const char *);
+int getcount(void);
+int getreadcount(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
