@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/andrescru/Library/CloudStorage/OneDrive-WaltzHealth/Documents/Github/ostep-projects/initial-xv6/xv6/kernel",
+      "program": "/Users/andrescru/Library/CloudStorage/OneDrive-WaltzHealth/Documents/Github/ostep-projects/initial-xv6/xv6/kernel/build/Debug/outDebug"
+    }
+  ]
+}

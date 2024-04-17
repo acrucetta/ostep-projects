@@ -4,8 +4,9 @@
 In this project, you'll be putting a new scheduler into xv6. It is called a
 **lottery scheduler**, and the full version is described in [this
 chapter](a,href=http://www.cs.wisc.edu/~remzi/OSFEP/cpu-sched-lottery.pdf) of
-the online book; you'll be building a simpler one.  The basic idea is simple:
-assign each running process a slice of the processor based in proportion to
+the online book; you'll be building a simpler one.  
+
+The basic idea is simple: assign each running process a slice of the processor based in proportion to
 the number of tickets it has; the more tickets a process has, the more it
 runs. Each time slice, a randomized lottery determines the winner of the
 lottery; that winning process is the one that runs for that time slice.
