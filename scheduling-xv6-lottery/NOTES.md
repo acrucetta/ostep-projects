@@ -8,7 +8,7 @@
 - Most of the code will be in `proc.c` and `proc.h`
 - See read() and sys_read() and argptr() to see how the pointer is passed to the kernel
 
-## Sys calls
+## Sys Calls
 
 int settickets(int number)
 - sets the number of tickets of the calling process; each process should get 1 ticket by default
@@ -22,6 +22,21 @@ int getpinfo(struct pstat *)
 Utils
 - Random number generator [x]
 - Make a graph with results
+
+## Ticketing logic
+
+```c
+while (1) {
+  count the total tickets allotted to all processes // one for loop here
+  get the winning ticket number
+  iterate over processes: // another for loop here
+    if not runnable:
+      continue
+    add its tickets to counter
+    if counter <= winning ticket number:
+      continue
+    run it
+```
 
 ## Files to update:
 
