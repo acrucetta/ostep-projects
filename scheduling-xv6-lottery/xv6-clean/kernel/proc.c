@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "rand.h"
 
 struct cpu cpus[NCPU];
 
@@ -458,9 +459,29 @@ scheduler(void)
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
 
+    // Count the total tickets allow for all processes
+    // Get winning ticket number
+    int total_ticks = 0;
+    for(p = proc; p < &proc[NPROC]; p++) {
+      if (p->state == RUNNABLE) {
+        total_ticks += p->tickets;
+      }
+    }
+    // Get a random number between 1 and total tickets
+    int winner_ticket = rand_int(total_ticks);
+    int counter = 0;
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
+        // Add its tickets to the counter
+        counter += p->tickets;
+
+        // If the counter is < winning ticket number continue
+        if (counter < winner_ticket) {
+          release(&p->lock);
+          continue;
+        }
+
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
